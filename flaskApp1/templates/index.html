@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - My Flask App{% endblock %}
+
+{% block head %}
+<!-- Additional head elements can go here -->
+{% endblock %}
+
+{% block content %}
+<body style="
+  margin: 0; 
+  font-family: Arial, sans-serif;
+  line-height: 1.5; 
+  color: bisque; 
+  background-color: rgb(190, 119, 26);
+  justify-content: center; 
+  align-items: center; 
+  min-height: 100vh;">
+ <div class="explanation">
+    <p>
+        This website provides a comprehensive resource for anyone looking to find the meaning and translation of English words. With a vast database of words and their definitions, this site empowers users to unlock the meaning behind any word they need to know. Whether you're a student, a writer, or simply someone curious about the intricacies of the English language, this website is your gateway to a deeper understanding of the words that shape our communication. With just a few clicks, you can discover the nuanced definitions, origins, and contextual usage of any term, enabling you to express yourself with precision and clarity.
+    </p>
+</div>
+<div class="container">
+    <input type="text" id="word-input" placeholder="Enter a word">
+    <button onclick="translateWord()">Translate</button>
+</div>
+<div class="translation-container" id="translation-container" style="display: none;">
+    <p>Translation</p>
+    <div class="output" id="translation-output"></div>
+</div>
+<div class="error" id="error-container"></div>
+
+<script>
+    function translateWord() {
+        var wordInput = document.getElementById("word-input").value;
+        var outputDiv = document.getElementById("translation-output");
+        var translationContainer = document.getElementById("translation-container");
+        var errorContainer = document.getElementById("error-container");
+
+        // Reset containers
+        outputDiv.textContent = "";
+        errorContainer.textContent = "";
+
+        // Call the translate function from your Python code
+        fetch(`/translate?word=${wordInput}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.translation) {
+                    outputDiv.textContent = data.translation;
+                    translationContainer.style.display = "block";
+                } else {
+                    errorContainer.textContent = data.error;
+                    translationContainer.style.display = "none"; // Hide translation container
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorContainer.textContent = 'An error occurred. Please try again later.';
+                translationContainer.style.display = "none"; // Hide translation container
+            });
+    }
+</script>
+</body>
+{% endblock %}
